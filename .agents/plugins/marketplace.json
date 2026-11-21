@@ -1,0 +1,10 @@
+{
+  "name": "agents-improvement",
+  "interface": { "displayName": "Улучшение работы агентов" },
+  "plugins": [{
+    "name": "agent-instructions",
+    "source": { "source": "local", "path": "./plugins/agent-instructions" },
+    "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+    "category": "Productivity"
+  }]
+}

@@ -1,59 +1,59 @@
-# Личный Marketplace `agents-improvement`
+# Личный каталог плагинов `agents-improvement`
 
-## Summary
+Исторический план первого Git-сценария. Актуальное направление и порядок работ описаны в [плане от 21 ноября 2026 года](2026-11-21-agents-improvement-roadmap.md). Плагин `git-workflow` и описанная ниже упаковка остаются прежними идеями; они не выбраны первым шагом текущего плана. Детали уточняются при возвращении к этому сценарию. Текст переведён на русский при подготовке первого релиза.
 
-Создать отдельный repo-local marketplace в `C:\Users\AFP\Git\agents-improvement`. Первый плагин будет `git-workflow` со skill `draft-commit-pr`, который формирует commit message и PR description по правилам пользователя, но не создает commit/PR без явного подтверждения.
+## Краткое описание
 
-## Key Changes
+Создать отдельный каталог плагинов внутри репозитория `agents-improvement`. Первый плагин — `git-workflow` со скиллом `draft-commit-pr`, который формирует сообщение коммита и описание PR по правилам пользователя, но не создаёт коммит или PR без явного разрешения.
 
-- Создать новый репозиторий:
-  - root: `C:\Users\AFP\Git\agents-improvement`
-  - marketplace: `.agents/plugins/marketplace.json`
-  - plugins root: `plugins/`
-  - plan file: `docs/plans/2026-05-11-agents-improvement-marketplace.md`
-- Marketplace:
+## Основные изменения
+
+- Создать новый репозиторий со следующей структурой:
+  - манифест каталога плагинов: `.agents/plugins/marketplace.json`
+  - корневой каталог плагинов: `plugins/`
+  - файл плана: `docs/plans/2026-05-11-agents-improvement-marketplace.md`
+- Каталог плагинов:
   - `name: "agents-improvement"`
-  - `interface.displayName: "Agents Improvement"`
-  - entry для `git-workflow`
+  - `interface.displayName: "Улучшение работы агентов"`
+  - запись для `git-workflow`
   - `source.path: "./plugins/git-workflow"`
   - `policy.installation: "AVAILABLE"`
   - `policy.authentication: "ON_INSTALL"`
   - `category: "Productivity"`
-- Plugin:
+- Плагин:
   - `plugins/git-workflow/.codex-plugin/plugin.json`
   - `skills: "./skills/"`
-  - display name: `Git Workflow`
-  - назначение: правила для git commit и PR подготовки.
-- Skill:
+  - отображаемое название: «Работа с Git»
+  - назначение: правила подготовки коммитов и PR.
+- Скилл:
   - `plugins/git-workflow/skills/draft-commit-pr/SKILL.md`
-  - trigger: использовать, когда пользователь просит подготовить commit message, PR title/body, или просит сделать commit/PR.
+  - условие вызова: пользователь просит подготовить сообщение коммита, заголовок или описание PR либо создать коммит или PR.
 
-## Commit / PR Rules
+## Правила коммитов и PR
 
-- Commit format: Conventional Commits.
+- Формат коммита: Conventional Commits.
 - Типы: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
-- `scope` опционален.
-- Summary на русском.
+- Область изменения в скобках необязательна.
+- Краткое описание — на русском.
 - Перед финальным текстом Codex должен посмотреть `git status`, `git diff`, понять смысл изменений, найти и запустить очевидные проверки проекта, затем указать, что запускалось.
-- PR body format:
-  - `Summary`
-  - `Tests`
-  - `Notes/Risks` только если есть реальные риски, миграции, breaking changes или ручные действия.
-- Codex сначала показывает proposed commit message и PR body. Реальный `git commit` или `gh pr create` выполняется только после явного подтверждения.
+- Разделы описания PR:
+  - «Что изменилось»;
+  - «Проверки»;
+  - «Примечания и риски» — только при наличии реальных рисков, миграций, несовместимых изменений или ручных действий.
+- Codex сначала показывает предлагаемый текст коммита и описание PR. Реальный `git commit` или `gh pr create` выполняется только с явного разрешения пользователя.
 
-## Test Plan
+## План проверки
 
-- Проверить JSON-валидность `marketplace.json` и `plugin.json`.
-- Проверить, что plugin entry указывает на `./plugins/git-workflow`.
-- Проверить skill metadata: имя в kebab-case, description содержит реальные trigger-фразы.
-- Прогнать сценарии: docs-only, feature + tests, fix с риском регрессии, и запрос "просто закоммить".
-- Проверить, что skill не выполняет commit/PR без подтверждения.
+- Проверить корректность JSON в `marketplace.json` и `plugin.json`.
+- Проверить, что запись плагина указывает на `./plugins/git-workflow`.
+- Проверить метаданные скилла: имя из строчных латинских слов через дефис, описание содержит реальные фразы для его вызова.
+- Пройти сценарии: изменение только документации, новая возможность с тестами, исправление с риском регрессии и запрос «просто закоммить».
+- Проверить, что скилл не создаёт коммит или PR без разрешения.
 
-## Assumptions
+## Исходные допущения
 
-- Папка `C:\Users\AFP\Git` уже существует.
-- Репозиторий будет создан как `C:\Users\AFP\Git\agents-improvement`.
-- Plan file будет сохранен как `docs/plans/2026-05-11-agents-improvement-marketplace.md`.
-- Plugin и skill имена: `git-workflow` и `draft-commit-pr`.
-- Язык commit message и PR description: русский.
-- На первом шаге делаем skill-инструкции без GitHub/GH automation scripts.
+- Репозиторий размещается в отдельном каталоге `agents-improvement` рядом с другими проектами владельца.
+- План сохраняется в `docs/plans/2026-05-11-agents-improvement-marketplace.md`.
+- Имена плагина и скилла: `git-workflow` и `draft-commit-pr`.
+- Язык сообщений коммитов и описаний PR — русский.
+- Первый шаг включает только инструкции скилла, без скриптов автоматизации GitHub.

@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+import { readFile, access } from 'node:fs/promises';
+import path from 'node:path';
+
+const root = path.resolve(import.meta.dirname, '..');
+const readJson = async file => JSON.parse(await readFile(path.join(root, file), 'utf8'));
+const directory = 'plugins/agent-instructions';
+const codex = await readJson(`${directory}/.codex-plugin/plugin.json`);
+const claude = await readJson(`${directory}/.claude-plugin/plugin.json`);
+assert.equal(codex.name, 'agent-instructions');
+assert.equal(claude.name, codex.name);
+assert.equal(claude.version, codex.version);
+for (const [host, manifest] of [['codex', codex], ['claude', claude]]) {
+  assert.ok(manifest.hooks.startsWith('./hooks/'));
+  const hooks = await readJson(`${directory}/${manifest.hooks}`);
+  const groups = hooks.hooks.SessionStart;
+  assert.equal(groups.length, 1);
+  const handler = groups[0].hooks[0];
+  assert.equal(handler.type, 'command');
+  assert.equal(handler.command, `node "\${CLAUDE_PLUGIN_ROOT}/scripts/session-start.mjs" ${host}`);
+  assert.equal(handler.async, undefined);
+  if (host === 'codex') assert.equal(handler.additionalContextLimit, 0);
+  assert.equal(handler.timeout, 30);
+  for (const event of ['startup', 'resume', 'compact', 'clear', 'fork']) assert.ok(new RegExp(groups[0].matcher).test(event));
+}
+const catalog = await readJson('.agents/plugins/marketplace.json');
+assert.equal(catalog.name, 'agents-improvement');
+assert.equal(catalog.plugins.length, 1);
+assert.equal(catalog.plugins[0].source.path, `./${directory}`);
+assert.equal(catalog.plugins[0].name, codex.name);
+assert.ok(catalog.plugins[0].policy.installation);
+assert.ok(catalog.plugins[0].policy.authentication);
+assert.ok(catalog.plugins[0].category);
+const claudeCatalog = await readJson('.claude-plugin/marketplace.json');
+assert.equal(claudeCatalog.name, catalog.name);
+assert.equal(claudeCatalog.plugins[0].source, `./${directory}`);
+assert.equal(claudeCatalog.plugins[0].name, claude.name);
+assert.equal(claudeCatalog.plugins[0].version, claude.version);
+await access(path.join(root, directory, 'scripts/session-start.mjs'));
+await access(path.join(root, 'prompts/base.md'));
+await access(path.join(root, 'prompts/optional/graphify.md'));
+console.log('Манифесты, пути, конфигурации хуков и каталоги Codex/Claude проверены.');

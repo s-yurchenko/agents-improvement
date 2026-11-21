@@ -1,0 +1,11 @@
+{
+  "name": "agents-improvement",
+  "metadata": { "description": "Личные инструкции и скиллы для работы с агентами" },
+  "owner": { "name": "AFP" },
+  "plugins": [{
+    "name": "agent-instructions",
+    "source": "./plugins/agent-instructions",
+    "description": "Общие инструкции с обновлением перед новым чатом",
+    "version": "0.1.0"
+  }]
+}

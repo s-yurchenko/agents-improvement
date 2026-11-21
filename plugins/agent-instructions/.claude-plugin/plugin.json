@@ -1,0 +1,7 @@
+{
+  "name": "agent-instructions",
+  "version": "0.1.0",
+  "description": "Загружает общие инструкции перед новым чатом и сохраняет выбранную версию для продолжения.",
+  "author": { "name": "AFP" },
+  "hooks": "./hooks/claude.json"
+}

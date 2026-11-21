@@ -1,35 +1,44 @@
-# Repository Instructions
+# Инструкции по работе с репозиторием
 
-This repository stores a personal Codex marketplace and custom plugins for improving agent workflows.
+В этом репозитории хранится личный набор дословных инструкций и переиспользуемых скиллов для агентов. Репозиторий предназначен для публичного доступа, прежде всего для задач владельца в Codex и Claude. Он развивается постепенно, в свободное время.
 
-## Project Shape
+## Структура проекта
 
-- Keep the marketplace manifest at `.agents/plugins/marketplace.json`.
-- Keep plugin folders under `plugins/<plugin-name>/`.
-- Keep each plugin manifest at `plugins/<plugin-name>/.codex-plugin/plugin.json`.
-- Keep skill folders under `plugins/<plugin-name>/skills/<skill-name>/`.
-- Use `docs/plans/` for implementation plans before building new plugins or major workflow changes.
+- `plugins/agent-instructions/` реализует загрузку инструкций через `SessionStart` для Codex и Claude Code. Подключение, состояние проверок и различия клиентов описаны в документации плагина.
+- Храни утверждённые тексты в `prompts/base.md`, а дополнительные инструкции — в `prompts/optional/`. Состав набора и результаты согласования фиксируй в `docs/prompts/`.
+- Храни манифест каталога плагинов в `.agents/plugins/marketplace.json`.
+- Размещай плагины в `plugins/<plugin-name>/`.
+- Храни манифест каждого плагина в `plugins/<plugin-name>/.codex-plugin/plugin.json`.
+- Размещай скиллы в `plugins/<plugin-name>/skills/<skill-name>/`.
+- Перед созданием новых плагинов или существенным изменением рабочего процесса сохраняй план реализации в `docs/plans/`.
 
-## Current Source of Truth
+## Актуальные документы
 
-- The first planned implementation is described in `docs/plans/2026-05-11-agents-improvement-marketplace.md`.
-- Do not invent additional plugins or automation beyond that plan unless the user asks for it.
+- Текущее направление и этапы развития описаны в `docs/plans/2026-11-21-agents-improvement-roadmap.md`.
+- Планы от 11 мая и 3 ноября 2026 года сохранены как история. Упомянутые там плагины, линтеры, языки и настройки CI не являются текущей очередью реализации.
+- `prompts/base.md` содержит утверждённый общий набор инструкций. `prompts/optional/graphify.md` подключается отдельно для выбранного проекта; для этого репозитория он не обязателен.
+- `docs/prompts/system-prompts-review.md` фиксирует утверждённый состав и результаты сверки. `docs/plans/2026-11-22-instruction-plugin.md` описывает согласованный механизм подключения и оставшиеся проверки в реальных клиентах.
+- Работай над одним конкретным пунктом плана за раз. Отложенные идеи нужно сначала выбрать и уточнить; их наличие не означает поручения реализовать всё сразу.
+- Не добавляй плагины или автоматизацию сверх согласованного плана без запроса пользователя.
 
-## Git Workflow Preferences
+## Работа с Git
 
-- Default branch: `master`.
-- Commit messages and PR descriptions should be in Russian unless a project-specific instruction says otherwise.
-- Use Conventional Commits for commit messages:
-  - allowed types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`;
-  - optional scope;
-  - Russian summary.
-- Before proposing a commit or PR, inspect `git status` and `git diff`, then run obvious project checks when they exist.
-- Show the proposed commit message and PR body before creating a real commit or PR.
-- Do not run `git commit`, `git push`, or PR creation commands without explicit user approval for that action.
+- Основная ветка — `master`.
+- Пиши сообщения коммитов и описания PR на русском, если инструкции конкретного проекта не требуют другого языка.
+- Используй формат Conventional Commits:
+  - допустимые типы: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`;
+  - область изменения в скобках необязательна;
+  - краткое описание — на русском.
+- Перед предложением коммита или PR изучи `git status` и `git diff`, затем выполни очевидные проверки проекта, если они есть.
+- Покажи предлагаемый текст коммита перед его созданием, а описание PR — перед созданием PR.
+- Не выполняй `git commit`, `git push` и создание PR без явного разрешения пользователя на соответствующее действие.
 
-## Editing Guidelines
+## Правила изменений
 
-- Prefer small, focused changes.
-- Preserve existing marketplace and plugin manifest fields unless a task explicitly changes them.
-- Validate JSON manifests after editing them.
-- Keep instructions concise and practical; move long examples or reference material into `references/` files inside the relevant skill.
+- Предпочитай небольшие изменения с одной понятной целью.
+- Сохраняй утверждённые формулировки промптов дословно, включая пунктуацию. Предложения по изменению текста и редакторские пояснения храни отдельно; изменение формулировок требует подтверждения пользователя.
+- Пиши документацию, комментарии к коду и сообщения пользователю на русском. Сохраняй технические идентификаторы, команды, имена файлов и точные названия элементов интерфейса.
+- Сохраняй существующие поля манифестов каталога и плагинов, если задача явно не требует их изменить.
+- После изменения JSON-манифестов проверяй их корректность.
+- При изменениях загрузчика запускай `npm run check` и `npm test`. Тесты используют изолированные локальные Git-репозитории; не заменяй их коммитами или отправкой изменений в рабочем репозитории.
+- Делай инструкции краткими и практичными. Длинные примеры и справочные материалы выноси в каталог `references/` соответствующего скилла.
